@@ -9,5 +9,6 @@ accelerate==1.8.1
 huggingface_hub
 Pillow
 numpy
+requests
 ultralytics==8.1.0
 git+https://github.com/WildChlamydia/MiVOLO.git

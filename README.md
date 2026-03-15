@@ -121,8 +121,11 @@ Process group_photo.jpg and tell me how many men and women are in the picture
 ### CLI
 
 ```bash
-# Basic inference — prints JSON to stdout
+# Local file
 .venv/bin/python mivolo_inference.py --image photo.jpg
+
+# URL
+.venv/bin/python mivolo_inference.py --image https://example.com/photo.jpg
 
 # Save annotated image with bounding boxes and labels
 .venv/bin/python mivolo_inference.py --image photo.jpg --draw --output result.jpg

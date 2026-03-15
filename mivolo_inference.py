@@ -22,8 +22,10 @@ Models:
 import argparse
 import json
 import sys
+from io import BytesIO
 from pathlib import Path
 
+import requests
 import torch
 import numpy as np
 from PIL import Image, ImageDraw, ImageFont
@@ -214,13 +216,25 @@ def annotate_image(image: Image.Image, results: list) -> Image.Image:
     return image
 
 
+# ── Image loading ──────────────────────────────────────────────────────────────
+
+def load_image(source: str) -> Image.Image:
+    """Load image from a local path or a URL (http/https)."""
+    if source.startswith("http://") or source.startswith("https://"):
+        print(f"  Downloading image from {source} ...", file=sys.stderr)
+        response = requests.get(source, timeout=15)
+        response.raise_for_status()
+        return Image.open(BytesIO(response.content)).convert("RGB")
+    return Image.open(source).convert("RGB")
+
+
 # ── Main pipeline ──────────────────────────────────────────────────────────────
 
 def process_image(image_path: str, output_path: str | None,
                   device: str, draw: bool,
                   detector, mivolo_model, processor, config) -> list:
-    """Full pipeline for a single image."""
-    image = Image.open(image_path).convert("RGB")
+    """Full pipeline for a single image (local path or URL)."""
+    image = load_image(image_path)
 
     # Step 1: Detect faces and persons
     faces, persons = detect(detector, image)
@@ -258,7 +272,7 @@ def process_image(image_path: str, output_path: str | None,
 def main():
     parser = argparse.ArgumentParser(description="MiVOLO — Age & Gender Detection Skill")
     parser.add_argument("--image", required=True,
-                        help="Path to input image or directory of images")
+                        help="Path to input image, directory of images, or http(s):// URL")
     parser.add_argument("--output", default=None,
                         help="Path to save annotated output image (or directory if --image is a dir)")
     parser.add_argument("--device", default="cuda" if torch.cuda.is_available() else "cpu",
@@ -270,6 +284,14 @@ def main():
     # Load models once
     detector = load_detector(args.device)
     mivolo_model, processor, config = load_mivolo(args.device)
+
+    # ── URL ───────────────────────────────────────────────────────────────────
+    if args.image.startswith("http://") or args.image.startswith("https://"):
+        print(f"Processing URL: {args.image}", file=sys.stderr)
+        results = process_image(args.image, args.output, args.device, args.draw,
+                                detector, mivolo_model, processor, config)
+        print(json.dumps(results, ensure_ascii=False, indent=2))
+        return
 
     image_path = Path(args.image)
 
