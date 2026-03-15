@@ -85,18 +85,31 @@ Image → YOLO Detector → faces[] + persons[]
 
 ### For Claude Code
 
-Claude Code reads skills from `~/.claude/skills/`. Installation is manual — `npx skills add` does **not** work for Claude Code (it installs to `~/.agents/skills/` which Claude Code doesn't use).
+Claude Code reads skills from `~/.claude/skills/`.
 
+**Option A — via npx (recommended):**
+```bash
+# 1. Install via npx (copies to ~/.agents/skills/)
+npx skills add /path/to/mivolo_skill
+# or from GitHub:
+npx skills add https://github.com/YOUR_USERNAME/mivolo_skill
+
+# 2. Copy to Claude Code skills directory
+cp -r ~/.agents/skills/mivolo_skill ~/.claude/skills/mivolo_skill
+
+# 3. Install dependencies
+cd ~/.claude/skills/mivolo_skill && bash install.sh
+```
+
+**Option B — manually:**
 ```bash
 # From a local directory
 cp -r /path/to/mivolo_skill ~/.claude/skills/mivolo_skill
 
 # Or clone from GitHub
 git clone https://github.com/YOUR_USERNAME/mivolo_skill ~/.claude/skills/mivolo_skill
-```
 
-Then run the installer:
-```bash
+# Install dependencies
 cd ~/.claude/skills/mivolo_skill && bash install.sh
 ```
 
@@ -108,7 +121,7 @@ Restart Claude Code — it will pick up the skill automatically.
 npx skills add https://github.com/YOUR_USERNAME/mivolo_skill
 ```
 
-This installs to `~/.agents/skills/mivolo_skill`.
+This installs to `~/.agents/skills/mivolo_skill` and runs `install.sh` automatically.
 
 ---
 
