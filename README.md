@@ -48,9 +48,18 @@ Models are downloaded automatically on first run from HuggingFace.
 
 ### From Claude Code
 
-Simply ask Claude:
+Simply ask Claude in natural language:
 ```
 Determine the age and gender of people in this image: /path/to/photo.jpg
+```
+```
+How old are the people in this photo? photo.jpg
+```
+```
+Run age and gender detection on all images in ./dataset/ and save annotated results to ./results/
+```
+```
+Process group_photo.jpg and tell me how many men and women are in the picture
 ```
 
 ### CLI
@@ -62,11 +71,100 @@ python mivolo_inference.py --image photo.jpg
 # Save annotated image with bounding boxes and labels
 python mivolo_inference.py --image photo.jpg --draw --output result.jpg
 
-# Process entire folder
+# Process entire folder of images
 python mivolo_inference.py --image ./photos/ --draw --output ./results/
 
-# Force CPU
+# Force CPU (no GPU required)
 python mivolo_inference.py --image photo.jpg --device cpu
+```
+
+## Examples
+
+### Single person
+
+```bash
+python mivolo_inference.py --image portrait.jpg
+```
+```json
+[
+  {
+    "person_id": 1,
+    "gender": "female",
+    "gender_confidence": 0.981,
+    "age": 34.2,
+    "face_box": [210, 80, 390, 280],
+    "person_box": [150, 60, 460, 720]
+  }
+]
+```
+
+### Group photo (multiple people)
+
+```bash
+python mivolo_inference.py --image group.jpg --draw --output group_annotated.jpg
+```
+```json
+[
+  {
+    "person_id": 1,
+    "gender": "male",
+    "gender_confidence": 0.994,
+    "age": 42.7,
+    "face_box": [95, 40, 220, 180],
+    "person_box": [60, 30, 260, 480]
+  },
+  {
+    "person_id": 2,
+    "gender": "female",
+    "gender_confidence": 0.976,
+    "age": 27.1,
+    "face_box": [310, 55, 430, 195],
+    "person_box": [280, 45, 470, 490]
+  },
+  {
+    "person_id": 3,
+    "gender": "male",
+    "gender_confidence": 0.963,
+    "age": 61.4,
+    "face_box": [520, 70, 650, 200],
+    "person_box": [490, 60, 690, 500]
+  }
+]
+```
+
+### Person without visible face (only body detected)
+
+```bash
+python mivolo_inference.py --image back_view.jpg
+```
+```json
+[
+  {
+    "person_id": 1,
+    "gender": "female",
+    "gender_confidence": 0.912,
+    "age": 29.8,
+    "face_box": null,
+    "person_box": [120, 50, 380, 700]
+  }
+]
+```
+
+### Batch processing a folder
+
+```bash
+python mivolo_inference.py --image ./dataset/ --draw --output ./results/
+```
+```json
+{
+  "photo1.jpg": [
+    {"person_id": 1, "gender": "male", "age": 35.0, "gender_confidence": 0.988, "face_box": [...], "person_box": [...]}
+  ],
+  "photo2.jpg": [
+    {"person_id": 1, "gender": "female", "age": 22.3, "gender_confidence": 0.971, "face_box": [...], "person_box": [...]},
+    {"person_id": 2, "gender": "male", "age": 48.6, "gender_confidence": 0.959, "face_box": [...], "person_box": [...]}
+  ]
+}
 ```
 
 ## Output
