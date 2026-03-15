@@ -9,7 +9,5 @@ accelerate==1.8.1
 huggingface_hub
 Pillow
 numpy
-
-# Backend dependency for the YOLO detector's trust_remote_code.
-# NOT imported directly in the inference script.
 ultralytics==8.1.0
+git+https://github.com/WildChlamydia/MiVOLO.git

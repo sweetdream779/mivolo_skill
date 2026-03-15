@@ -54,6 +54,7 @@ echo "📥 Installing dependencies..."
     "huggingface_hub" \
     "Pillow" \
     "numpy" \
+    "git+https://github.com/WildChlamydia/MiVOLO.git" \
     --quiet
 
 echo "✅ Dependencies installed"
