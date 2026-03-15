@@ -2,11 +2,17 @@
 """
 MiVOLO Skill — Age & Gender Detection
 
+Both models are loaded and run exclusively via the Transformers API (trust_remote_code=True).
+No direct ultralytics or MiVOLO library imports — ultralytics is a backend dependency
+only, used internally by the detector's remote code.
+
 Pipeline:
   1. Detect faces and persons via YOLO (iitolstykh/YOLO-Face-Person-Detector)
+     → loaded with AutoModel.from_pretrained (Transformers, Method 1)
   2. Match each face to the nearest person body
   3. Crop and preprocess face + body crops (384x384)
   4. Run MiVOLO v2 (iitolstykh/mivolo_v2) for age & gender prediction
+     → loaded with AutoModelForImageClassification.from_pretrained (Transformers)
 
 Models:
   - Detector: https://huggingface.co/iitolstykh/YOLO-Face-Person-Detector
@@ -35,7 +41,10 @@ DETECTOR_IOU = 0.7
 # ── Model loading ──────────────────────────────────────────────────────────────
 
 def load_detector(device: str):
-    """Load YOLOv8 face+person detector from HuggingFace."""
+    """
+    Load YOLOv8 face+person detector via Transformers API (Method 1).
+    Ref: https://huggingface.co/iitolstykh/YOLO-Face-Person-Detector
+    """
     from transformers import AutoModel
 
     print(f"Loading detector {DETECTOR_MODEL_ID}...", file=sys.stderr)
@@ -49,7 +58,10 @@ def load_detector(device: str):
 
 
 def load_mivolo(device: str):
-    """Load MiVOLO v2 model, processor and config from HuggingFace."""
+    """
+    Load MiVOLO v2 model, processor and config via Transformers API.
+    Ref: https://huggingface.co/iitolstykh/mivolo_v2
+    """
     from transformers import AutoConfig, AutoImageProcessor, AutoModelForImageClassification
 
     print(f"Loading MiVOLO {MIVOLO_MODEL_ID}...", file=sys.stderr)

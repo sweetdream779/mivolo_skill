@@ -3,6 +3,8 @@ torchvision
 Pillow
 transformers==4.51.0
 accelerate==1.8.1
-ultralytics==8.1.0
 huggingface_hub
 numpy
+# ultralytics is required as a backend dependency for the YOLO detector's
+# trust_remote_code. It is NOT imported directly in the inference script.
+ultralytics==8.1.0
