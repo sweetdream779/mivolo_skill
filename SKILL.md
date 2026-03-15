@@ -33,7 +33,7 @@ The skill uses an isolated virtual environment created by `install.sh`.
 Always invoke the script via the venv Python:
 
 ```bash
-SKILL_DIR="$HOME/.claude/skills/mivolo_skill"
+SKILL_DIR="$HOME/.agents/skills/mivolo_skill"
 $SKILL_DIR/.venv/bin/python $SKILL_DIR/mivolo_inference.py --image <path_to_image> [--output <output_path>] [--device cpu|cuda] [--draw]
 ```
 
