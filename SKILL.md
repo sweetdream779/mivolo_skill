@@ -1,3 +1,8 @@
+---
+name: mivolo_skill
+description: Detect the age and gender of people in images using MiVOLO v2 and a YOLOv8 face+person detector. Supports single images, folders, and URLs.
+---
+
 # MiVOLO Skill — Age & Gender Detection
 
 Detect age and gender of people in images using the MiVOLO v2 model.
