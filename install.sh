@@ -42,10 +42,10 @@ echo "📥 Installing dependencies..."
 
 "$VENV_DIR/bin/pip" install --upgrade pip --quiet
 
-# PyTorch: try CUDA first, fall back to CPU-only
-"$VENV_DIR/bin/pip" install torch torchvision \
+# PyTorch 2.5.1: try CUDA first, fall back to CPU-only
+"$VENV_DIR/bin/pip" install "torch==2.5.1" torchvision \
     --index-url https://download.pytorch.org/whl/cu118 --quiet 2>/dev/null || \
-"$VENV_DIR/bin/pip" install torch torchvision --quiet
+"$VENV_DIR/bin/pip" install "torch==2.5.1" torchvision --quiet
 
 "$VENV_DIR/bin/pip" install \
     "transformers==4.51.0" \

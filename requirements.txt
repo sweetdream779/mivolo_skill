@@ -1,10 +1,15 @@
-torch>=1.13.0
+# Versions pinned to match HuggingFace model READMEs:
+# - https://huggingface.co/iitolstykh/mivolo_v2
+# - https://huggingface.co/iitolstykh/YOLO-Face-Person-Detector
+
+torch==2.5.1
 torchvision
-Pillow
 transformers==4.51.0
 accelerate==1.8.1
 huggingface_hub
+Pillow
 numpy
-# ultralytics is required as a backend dependency for the YOLO detector's
-# trust_remote_code. It is NOT imported directly in the inference script.
+
+# Backend dependency for the YOLO detector's trust_remote_code.
+# NOT imported directly in the inference script.
 ultralytics==8.1.0
