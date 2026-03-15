@@ -3,6 +3,45 @@
 A Claude Code skill for age and gender detection in images using MiVOLO v2.
 Both models are loaded via the **Transformers API** (`trust_remote_code=True`).
 
+---
+
+## 🚀 Quick Start
+
+```bash
+# 1. Install
+git clone https://github.com/YOUR_USERNAME/mivolo_skill && cd mivolo_skill
+bash install.sh
+
+# 2. Run
+.venv/bin/python mivolo_inference.py --image photo.jpg
+```
+
+Or from **Claude Code** — just ask:
+```
+Determine the age and gender of people in this image: photo.jpg
+```
+
+---
+
+## Table of Contents
+
+- [Models](#models)
+- [Pipeline](#pipeline)
+- [Installation](#installation)
+- [Usage](#usage)
+  - [From Claude Code](#from-claude-code)
+  - [CLI](#cli)
+- [Examples](#examples)
+  - [Single person](#single-person)
+  - [Group photo](#group-photo-multiple-people)
+  - [Person without visible face](#person-without-visible-face-only-body-detected)
+  - [Batch processing](#batch-processing-a-folder)
+- [Output format](#output-format)
+- [Requirements](#requirements)
+- [References](#references)
+
+---
+
 ## Models
 
 ### 1. Detector — [iitolstykh/YOLO-Face-Person-Detector](https://huggingface.co/iitolstykh/YOLO-Face-Person-Detector)
@@ -88,7 +127,7 @@ Process group_photo.jpg and tell me how many men and women are in the picture
 ### Single person
 
 ```bash
-python mivolo_inference.py --image portrait.jpg
+.venv/bin/python mivolo_inference.py --image portrait.jpg
 ```
 ```json
 [
@@ -106,7 +145,7 @@ python mivolo_inference.py --image portrait.jpg
 ### Group photo (multiple people)
 
 ```bash
-python mivolo_inference.py --image group.jpg --draw --output group_annotated.jpg
+.venv/bin/python mivolo_inference.py --image group.jpg --draw --output group_annotated.jpg
 ```
 ```json
 [
@@ -140,7 +179,7 @@ python mivolo_inference.py --image group.jpg --draw --output group_annotated.jpg
 ### Person without visible face (only body detected)
 
 ```bash
-python mivolo_inference.py --image back_view.jpg
+.venv/bin/python mivolo_inference.py --image back_view.jpg
 ```
 ```json
 [
@@ -158,7 +197,7 @@ python mivolo_inference.py --image back_view.jpg
 ### Batch processing a folder
 
 ```bash
-python mivolo_inference.py --image ./dataset/ --draw --output ./results/
+.venv/bin/python mivolo_inference.py --image ./dataset/ --draw --output ./results/
 ```
 ```json
 {
@@ -172,7 +211,7 @@ python mivolo_inference.py --image ./dataset/ --draw --output ./results/
 }
 ```
 
-## Output
+## Output format
 
 ```json
 [
@@ -183,14 +222,6 @@ python mivolo_inference.py --image ./dataset/ --draw --output ./results/
     "age": 28.4,
     "face_box": [120, 45, 310, 200],
     "person_box": [100, 40, 320, 390]
-  },
-  {
-    "person_id": 2,
-    "gender": "male",
-    "gender_confidence": 0.991,
-    "age": 42.1,
-    "face_box": [400, 60, 530, 180],
-    "person_box": [380, 55, 590, 410]
   }
 ]
 ```
