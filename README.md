@@ -25,7 +25,11 @@ The skill returns structured JSON with per-person results and can optionally sav
 ## 🚀 Quick Start (as a Claude Code skill)
 
 ```bash
-npx skills add https://github.com/YOUR_USERNAME/mivolo_skill
+# 1. Copy to Claude Code skills directory
+cp -r /path/to/mivolo_skill ~/.claude/skills/mivolo_skill
+
+# 2. Install dependencies
+cd ~/.claude/skills/mivolo_skill && bash install.sh
 ```
 
 From **Claude Code** — just ask:
@@ -79,19 +83,34 @@ Image → YOLO Detector → faces[] + persons[]
 
 ## Installation
 
-### As a Claude Code skill
+### For Claude Code
+
+Claude Code reads skills from `~/.claude/skills/`. Installation is manual — `npx skills add` does **not** work for Claude Code (it installs to `~/.agents/skills/` which Claude Code doesn't use).
+
+```bash
+# From a local directory
+cp -r /path/to/mivolo_skill ~/.claude/skills/mivolo_skill
+
+# Or clone from GitHub
+git clone https://github.com/YOUR_USERNAME/mivolo_skill ~/.claude/skills/mivolo_skill
+```
+
+Then run the installer:
+```bash
+cd ~/.claude/skills/mivolo_skill && bash install.sh
+```
+
+Restart Claude Code — it will pick up the skill automatically.
+
+### For other agents (Cursor, Codex, Gemini CLI, etc.)
 
 ```bash
 npx skills add https://github.com/YOUR_USERNAME/mivolo_skill
 ```
 
-### Manual
+This installs to `~/.agents/skills/mivolo_skill`.
 
-```bash
-git clone https://github.com/YOUR_USERNAME/mivolo_skill
-cd mivolo_skill
-bash install.sh
-```
+---
 
 `install.sh` will:
 1. Check that **Python 3.8+** is installed (exits with error if not found)
