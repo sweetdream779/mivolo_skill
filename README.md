@@ -1,14 +1,30 @@
 # mivolo_skill
 
-A Claude Code skill for age and gender detection in images using [MiVOLO v2](https://huggingface.co/iitolstykh/mivolo_v2).
+A Claude Code skill for age and gender detection in images using MiVOLO v2.
+Both models are loaded via the **Transformers API** (`trust_remote_code=True`).
 
-## Model
+## Models
 
-- **Model:** [iitolstykh/mivolo_v2](https://huggingface.co/iitolstykh/mivolo_v2) (28.8M parameters)
-- **Library:** [WildChlamydia/MiVOLO](https://github.com/WildChlamydia/MiVOLO)
+### 1. Detector — [iitolstykh/YOLO-Face-Person-Detector](https://huggingface.co/iitolstykh/YOLO-Face-Person-Detector)
+YOLOv8x fine-tuned on ~150k images for detecting two classes: **Face** and **Person**.
+- Loaded via `AutoModel.from_pretrained`
+- Conf threshold: 0.4 / IoU threshold: 0.7
+
+### 2. Age & Gender — [iitolstykh/mivolo_v2](https://huggingface.co/iitolstykh/mivolo_v2)
+MiVOLO v2 — state-of-the-art age and gender estimation from face + body crops.
+- Loaded via `AutoModelForImageClassification.from_pretrained`
 - **Gender accuracy:** 97.3–98.0%
 - **Age MAE:** ~3.65 years
-- **Input size:** 384×384 px (face + body crops)
+- **Input size:** 384×384 px per crop
+
+## Pipeline
+
+```
+Image → YOLO Detector → faces[] + persons[]
+                      → match face↔person by IoU
+                      → crop & resize to 384×384
+                      → MiVOLO v2 → age + gender per person
+```
 
 ## Installation
 
@@ -25,6 +41,8 @@ git clone https://github.com/YOUR_USERNAME/mivolo_skill
 cd mivolo_skill
 bash install.sh
 ```
+
+Models are downloaded automatically on first run from HuggingFace.
 
 ## Usage
 
@@ -60,14 +78,16 @@ python mivolo_inference.py --image photo.jpg --device cpu
     "gender": "female",
     "gender_confidence": 0.973,
     "age": 28.4,
-    "bbox": [120, 45, 310, 390]
+    "face_box": [120, 45, 310, 200],
+    "person_box": [100, 40, 320, 390]
   },
   {
     "person_id": 2,
     "gender": "male",
     "gender_confidence": 0.991,
     "age": 42.1,
-    "bbox": [400, 60, 590, 410]
+    "face_box": [400, 60, 530, 180],
+    "person_box": [380, 55, 590, 410]
   }
 ]
 ```
@@ -77,9 +97,11 @@ python mivolo_inference.py --image photo.jpg --device cpu
 - Python 3.8+
 - PyTorch 1.13+
 - GPU recommended (CUDA), works on CPU
+- `ultralytics==8.1.0` — backend dependency for the YOLO detector (not imported directly)
 
 ## References
 
 - [MiVOLO paper](https://arxiv.org/abs/2307.04616)
 - [MiVOLO GitHub](https://github.com/WildChlamydia/MiVOLO)
-- [Model on HuggingFace](https://huggingface.co/iitolstykh/mivolo_v2)
+- [MiVOLO v2 on HuggingFace](https://huggingface.co/iitolstykh/mivolo_v2)
+- [YOLO Detector on HuggingFace](https://huggingface.co/iitolstykh/YOLO-Face-Person-Detector)
