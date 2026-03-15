@@ -1,0 +1,6 @@
+torch>=1.13.0
+torchvision
+Pillow
+transformers==4.51.0
+accelerate==1.8.1
+git+https://github.com/WildChlamydia/MiVOLO.git
