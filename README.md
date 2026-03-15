@@ -42,7 +42,12 @@ cd mivolo_skill
 bash install.sh
 ```
 
-Models are downloaded automatically on first run from HuggingFace.
+`install.sh` will:
+1. Check that **Python 3.8+** is installed (exits with error if not found)
+2. Create an isolated **virtual environment** at `.venv/` inside the skill directory
+3. Install all dependencies into the venv (no impact on system Python or conda envs)
+
+Models are downloaded automatically on first run from HuggingFace and cached in `~/.cache/huggingface/`.
 
 ## Usage
 
@@ -66,16 +71,16 @@ Process group_photo.jpg and tell me how many men and women are in the picture
 
 ```bash
 # Basic inference — prints JSON to stdout
-python mivolo_inference.py --image photo.jpg
+.venv/bin/python mivolo_inference.py --image photo.jpg
 
 # Save annotated image with bounding boxes and labels
-python mivolo_inference.py --image photo.jpg --draw --output result.jpg
+.venv/bin/python mivolo_inference.py --image photo.jpg --draw --output result.jpg
 
 # Process entire folder of images
-python mivolo_inference.py --image ./photos/ --draw --output ./results/
+.venv/bin/python mivolo_inference.py --image ./photos/ --draw --output ./results/
 
 # Force CPU (no GPU required)
-python mivolo_inference.py --image photo.jpg --device cpu
+.venv/bin/python mivolo_inference.py --image photo.jpg --device cpu
 ```
 
 ## Examples
@@ -195,7 +200,7 @@ python mivolo_inference.py --image ./dataset/ --draw --output ./results/
 - Python 3.8+
 - PyTorch 1.13+
 - GPU recommended (CUDA), works on CPU
-- `ultralytics==8.1.0` — backend dependency for the YOLO detector (not imported directly)
+- `ultralytics==8.1.0` — backend dependency for the YOLO detector
 
 ## References
 

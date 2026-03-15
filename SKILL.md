@@ -24,8 +24,12 @@ Invoke this skill when the user wants to:
 
 ## How to run
 
+The skill uses an isolated virtual environment created by `install.sh`.
+Always invoke the script via the venv Python:
+
 ```bash
-python mivolo_inference.py --image <path_to_image> [--output <output_path>] [--device cpu|cuda]
+SKILL_DIR="$HOME/.claude/skills/mivolo_skill"
+$SKILL_DIR/.venv/bin/python $SKILL_DIR/mivolo_inference.py --image <path_to_image> [--output <output_path>] [--device cpu|cuda] [--draw]
 ```
 
 ### Arguments
@@ -43,14 +47,18 @@ Returns a JSON list of detected persons:
     "gender": "female",
     "gender_confidence": 0.97,
     "age": 28.4,
-    "bbox": [x1, y1, x2, y2]
+    "face_box": [x1, y1, x2, y2],
+    "person_box": [x1, y1, x2, y2]
   }
 ]
 ```
 
 ## Installation
 
-Run `bash install.sh` to install all dependencies.
+Run `bash install.sh` — it will:
+1. Check that Python 3.8+ is installed
+2. Create an isolated virtual environment at `.venv/` inside the skill directory
+3. Install all dependencies into the venv (no impact on system Python)
 
 **System requirements:**
 - Python 3.8+
