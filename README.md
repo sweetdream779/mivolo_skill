@@ -3,20 +3,32 @@
 A Claude Code skill for age and gender detection in images using MiVOLO v2.
 Both models are loaded via the **Transformers API** (`trust_remote_code=True`).
 
+## What this skill does
+
+**mivolo_skill** lets Claude Code detect the **age and gender** of people in images — single portraits, group photos, or entire folders of images.
+
+Under the hood it runs a two-stage pipeline:
+1. **YOLOv8x detector** finds all faces and bodies in the image
+2. **MiVOLO v2** estimates age and gender from the matched face + body crops
+
+The skill returns structured JSON with per-person results and can optionally save an annotated image with bounding boxes and labels.
+
+**Key capabilities:**
+- 👥 Multiple people per image — each detected person gets their own result
+- 🧍 Works even without a visible face — body-only predictions supported
+- 📁 Batch processing — run on an entire folder at once
+- 🖥️ GPU + CPU support — auto-detects available hardware
+- 🔒 Isolated environment — installed in its own `.venv`, no system Python impact
+
 ---
 
-## 🚀 Quick Start
+## 🚀 Quick Start (as a Claude Code skill)
 
 ```bash
-# 1. Install
-git clone https://github.com/YOUR_USERNAME/mivolo_skill && cd mivolo_skill
-bash install.sh
-
-# 2. Run
-.venv/bin/python mivolo_inference.py --image photo.jpg
+npx skills add https://github.com/YOUR_USERNAME/mivolo_skill
 ```
 
-Or from **Claude Code** — just ask:
+From **Claude Code** — just ask:
 ```
 Determine the age and gender of people in this image: photo.jpg
 ```
