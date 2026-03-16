@@ -25,7 +25,7 @@ The skill returns structured JSON with per-person results and can optionally sav
 ## Quick Start
 
 ```bash
-git clone https://github.com/iitolstykh/mivolo_skill
+git clone https://github.com/sweetdream779/mivolo_skill
 cd mivolo_skill
 claude
 ```
@@ -65,7 +65,7 @@ Models (~500MB) download automatically on first run.
 ### Automatic via `/setup` (recommended)
 
 ```bash
-git clone https://github.com/iitolstykh/mivolo_skill
+git clone https://github.com/sweetdream779/mivolo_skill
 cd mivolo_skill
 claude
 # Type: /setup
@@ -81,7 +81,7 @@ The `/setup` command will:
 ### Manual install
 
 ```bash
-git clone https://github.com/iitolstykh/mivolo_skill ~/.claude/skills/mivolo_skill
+git clone https://github.com/sweetdream779/mivolo_skill ~/.claude/skills/mivolo_skill
 bash ~/.claude/skills/mivolo_skill/install.sh
 ```
 
