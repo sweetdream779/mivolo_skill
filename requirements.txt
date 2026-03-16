@@ -4,7 +4,7 @@
 
 torch==2.5.1
 torchvision
-transformers==4.51.0
+transformers==4.57.1
 accelerate==1.8.1
 huggingface_hub
 Pillow

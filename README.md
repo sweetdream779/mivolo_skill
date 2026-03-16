@@ -14,36 +14,38 @@ Under the hood it runs a two-stage pipeline:
 The skill returns structured JSON with per-person results and can optionally save an annotated image with bounding boxes and labels.
 
 **Key capabilities:**
-- 👥 Multiple people per image — each detected person gets their own result
-- 🧍 Works even without a visible face — body-only predictions supported
-- 📁 Batch processing — run on an entire folder at once
-- 🖥️ GPU + CPU support — auto-detects available hardware
-- 🔒 Isolated environment — installed in its own `.venv`, no system Python impact
+- Multiple people per image — each detected person gets their own result
+- Works even without a visible face — body-only predictions supported
+- Batch processing — run on an entire folder at once
+- GPU + CPU support — auto-detects available hardware
+- Isolated environment — installed in its own `.venv`, no system Python impact
 
 ---
 
-## 🚀 Quick Start (as a Claude Code skill)
+## Quick Start
 
 ```bash
-# 1. Copy to Claude Code skills directory
-cp -r /path/to/mivolo_skill ~/.claude/skills/mivolo_skill
-
-# 2. Install dependencies
-cd ~/.claude/skills/mivolo_skill && bash install.sh
+git clone https://github.com/iitolstykh/mivolo_skill
+cd mivolo_skill
+claude
 ```
 
-From **Claude Code** — just ask:
+Then type `/setup` — Claude will automatically install all dependencies, create a virtual environment, and register the skill globally.
+
+After setup, just ask from **any** Claude Code session:
 ```
 Determine the age and gender of people in this image: photo.jpg
 ```
+
+Models (~500MB) download automatically on first run.
 
 ---
 
 ## Table of Contents
 
+- [Installation](#installation)
 - [Models](#models)
 - [Pipeline](#pipeline)
-- [Installation](#installation)
 - [Usage](#usage)
   - [From Claude Code](#from-claude-code)
   - [CLI](#cli)
@@ -55,6 +57,35 @@ Determine the age and gender of people in this image: photo.jpg
 - [Output format](#output-format)
 - [Requirements](#requirements)
 - [References](#references)
+
+---
+
+## Installation
+
+### Automatic via `/setup` (recommended)
+
+```bash
+git clone https://github.com/iitolstykh/mivolo_skill
+cd mivolo_skill
+claude
+# Type: /setup
+```
+
+The `/setup` command will:
+1. Check that **Python 3.8+** is installed
+2. Create an isolated **virtual environment** at `.venv/`
+3. Install all dependencies (PyTorch, Transformers, ultralytics, MiVOLO)
+4. Register the skill in `~/.claude/skills/` so it's available globally
+5. Verify the installation
+
+### Manual install
+
+```bash
+git clone https://github.com/iitolstykh/mivolo_skill ~/.claude/skills/mivolo_skill
+bash ~/.claude/skills/mivolo_skill/install.sh
+```
+
+Claude Code picks up the skill automatically — no restart needed.
 
 ---
 
@@ -70,7 +101,9 @@ MiVOLO v2 — state-of-the-art age and gender estimation from face + body crops.
 - Loaded via `AutoModelForImageClassification.from_pretrained`
 - **Gender accuracy:** 97.3–98.0%
 - **Age MAE:** ~3.65 years
-- **Input size:** 384×384 px per crop
+- **Input size:** 384x384 px per crop
+
+Models are downloaded automatically on first run from HuggingFace and cached in `~/.cache/huggingface/`.
 
 ## Pipeline
 
@@ -80,57 +113,6 @@ Image → YOLO Detector → faces[] + persons[]
                       → crop & resize to 384×384
                       → MiVOLO v2 → age + gender per person
 ```
-
-## Installation
-
-### For Claude Code
-
-Claude Code reads skills from `~/.claude/skills/`.
-
-**Option A — via npx (recommended):**
-```bash
-# 1. Install via npx (copies to ~/.agents/skills/)
-npx skills add /path/to/mivolo_skill
-# or from GitHub:
-npx skills add https://github.com/YOUR_USERNAME/mivolo_skill
-
-# 2. Copy to Claude Code skills directory
-cp -r ~/.agents/skills/mivolo_skill ~/.claude/skills/mivolo_skill
-
-# 3. Install dependencies
-cd ~/.claude/skills/mivolo_skill && bash install.sh
-```
-
-**Option B — manually:**
-```bash
-# From a local directory
-cp -r /path/to/mivolo_skill ~/.claude/skills/mivolo_skill
-
-# Or clone from GitHub
-git clone https://github.com/YOUR_USERNAME/mivolo_skill ~/.claude/skills/mivolo_skill
-
-# Install dependencies
-cd ~/.claude/skills/mivolo_skill && bash install.sh
-```
-
-Restart Claude Code — it will pick up the skill automatically.
-
-### For other agents (Cursor, Codex, Gemini CLI, etc.)
-
-```bash
-npx skills add https://github.com/YOUR_USERNAME/mivolo_skill
-```
-
-This installs to `~/.agents/skills/mivolo_skill` and runs `install.sh` automatically.
-
----
-
-`install.sh` will:
-1. Check that **Python 3.8+** is installed (exits with error if not found)
-2. Create an isolated **virtual environment** at `.venv/` inside the skill directory
-3. Install all dependencies into the venv (no impact on system Python or conda envs)
-
-Models are downloaded automatically on first run from HuggingFace and cached in `~/.cache/huggingface/`.
 
 ## Usage
 
@@ -153,28 +135,37 @@ Process group_photo.jpg and tell me how many men and women are in the picture
 ### CLI
 
 ```bash
-# Local file
-.venv/bin/python mivolo_inference.py --image photo.jpg
+SKILL_DIR="$HOME/.claude/skills/mivolo_skill"
 
-# URL
-.venv/bin/python mivolo_inference.py --image https://example.com/photo.jpg
+# Single image
+$SKILL_DIR/.venv/bin/python $SKILL_DIR/mivolo_inference.py --image photo.jpg
+
+# Image from URL
+$SKILL_DIR/.venv/bin/python $SKILL_DIR/mivolo_inference.py --image https://example.com/photo.jpg
 
 # Save annotated image with bounding boxes and labels
-.venv/bin/python mivolo_inference.py --image photo.jpg --draw --output result.jpg
+$SKILL_DIR/.venv/bin/python $SKILL_DIR/mivolo_inference.py --image photo.jpg --draw --output result.jpg
 
-# Process entire folder of images
-.venv/bin/python mivolo_inference.py --image ./photos/ --draw --output ./results/
+# Process entire folder
+$SKILL_DIR/.venv/bin/python $SKILL_DIR/mivolo_inference.py --image ./photos/ --draw --output ./results/
 
 # Force CPU (no GPU required)
-.venv/bin/python mivolo_inference.py --image photo.jpg --device cpu
+$SKILL_DIR/.venv/bin/python $SKILL_DIR/mivolo_inference.py --image photo.jpg --device cpu
 ```
+
+| Argument | Required | Description |
+|----------|----------|-------------|
+| `--image` | Yes | Path to image, directory, or URL |
+| `--output` | No | Path to save annotated image |
+| `--device` | No | `cuda` (default if available) or `cpu` |
+| `--draw` | No | Save annotated image with bounding boxes and labels |
 
 ## Examples
 
 ### Single person
 
 ```bash
-.venv/bin/python mivolo_inference.py --image portrait.jpg
+$SKILL_DIR/.venv/bin/python $SKILL_DIR/mivolo_inference.py --image portrait.jpg
 ```
 ```json
 [
@@ -192,7 +183,7 @@ Process group_photo.jpg and tell me how many men and women are in the picture
 ### Group photo (multiple people)
 
 ```bash
-.venv/bin/python mivolo_inference.py --image group.jpg --draw --output group_annotated.jpg
+$SKILL_DIR/.venv/bin/python $SKILL_DIR/mivolo_inference.py --image group.jpg --draw --output group_annotated.jpg
 ```
 ```json
 [
@@ -226,7 +217,7 @@ Process group_photo.jpg and tell me how many men and women are in the picture
 ### Person without visible face (only body detected)
 
 ```bash
-.venv/bin/python mivolo_inference.py --image back_view.jpg
+$SKILL_DIR/.venv/bin/python $SKILL_DIR/mivolo_inference.py --image back_view.jpg
 ```
 ```json
 [
@@ -244,7 +235,7 @@ Process group_photo.jpg and tell me how many men and women are in the picture
 ### Batch processing a folder
 
 ```bash
-.venv/bin/python mivolo_inference.py --image ./dataset/ --draw --output ./results/
+$SKILL_DIR/.venv/bin/python $SKILL_DIR/mivolo_inference.py --image ./dataset/ --draw --output ./results/
 ```
 ```json
 {
@@ -278,7 +269,7 @@ Process group_photo.jpg and tell me how many men and women are in the picture
 - Python 3.8+
 - PyTorch 1.13+
 - GPU recommended (CUDA), works on CPU
-- `ultralytics==8.1.0` — backend dependency for the YOLO detector
+- ~2GB disk (venv + models)
 
 ## References
 
